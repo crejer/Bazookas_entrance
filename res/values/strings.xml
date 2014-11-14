@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Bazookas_entrance</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+   <string name="Welcome">This is the welcome image</string>
+    <string name="ContentURL">http://melbar.be/jeroencrevits/bazookas/demo/BazookasEntrance.xml</string>
+
+</resources>

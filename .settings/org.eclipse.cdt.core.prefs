@@ -1,0 +1,11 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.macosx.exe.debug.640330155/NDKROOT/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.macosx.exe.debug.640330155/NDKROOT/operation=replace
+environment/project/cdt.managedbuild.config.gnu.macosx.exe.debug.640330155/NDKROOT/value=/Users/jeroen/Documents/development/android-ndk-r10c/
+environment/project/cdt.managedbuild.config.gnu.macosx.exe.debug.640330155/append=true
+environment/project/cdt.managedbuild.config.gnu.macosx.exe.debug.640330155/appendContributed=false
+environment/project/cdt.managedbuild.config.macosx.exe.release.842339224/NDKROOT/delimiter=\:
+environment/project/cdt.managedbuild.config.macosx.exe.release.842339224/NDKROOT/operation=replace
+environment/project/cdt.managedbuild.config.macosx.exe.release.842339224/NDKROOT/value=/Users/jeroen/Documents/development/android-ndk-r10c/
+environment/project/cdt.managedbuild.config.macosx.exe.release.842339224/append=true
+environment/project/cdt.managedbuild.config.macosx.exe.release.842339224/appendContributed=false
