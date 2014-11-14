@@ -24,19 +24,16 @@ import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 
 import android.support.v7.app.ActionBarActivity;
-import android.app.ActionBar.LayoutParams;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -49,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements
 		CvCameraViewListener2 {
 	private CameraBridgeViewBase mOpenCvCameraView;
 	private String TAG = "Entrance_Bazookas_Debug";
-	private WelcomeFragment wf;
+	
 	private VideoFragment vf;
 	private Mat mRgba;
 	private Mat mGray;
@@ -59,8 +56,8 @@ public class MainActivity extends ActionBarActivity implements
 	public static final int JAVA_DETECTOR = 0;
 	public static final int NATIVE_DETECTOR = 1;
 	private int mDetectorType = NATIVE_DETECTOR;
-	private String[] mDetectorName;
-
+	
+private int needToCatchFrame = 0;
 	private float mRelativeFaceSize = 0.2f;
 	private int mAbsoluteFaceSize = 0;
 
@@ -69,8 +66,8 @@ public class MainActivity extends ActionBarActivity implements
 	TextView txtWelcome;
 	HandleXML obj;
 	private ArrayList<Person> persons;
-	ArrayList<ArrayList<Point>>TLs = new ArrayList<ArrayList<Point>>();
-	ArrayList<ArrayList<Point>>BRs = new ArrayList<ArrayList<Point>>();
+	ArrayList<ArrayList<Point>> TLs = new ArrayList<ArrayList<Point>>();
+	ArrayList<ArrayList<Point>> BRs = new ArrayList<ArrayList<Point>>();
 	Point tl = new Point(0, 0);
 	Point br = new Point(0, 0);
 	private boolean timerIsRunning;
@@ -85,7 +82,7 @@ public class MainActivity extends ActionBarActivity implements
 		// open();
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-		View decorView = getWindow().getDecorView();
+		
 		// Hide the status bar.
 		if (Build.VERSION.SDK_INT < 16) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -103,8 +100,6 @@ public class MainActivity extends ActionBarActivity implements
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.HelloOpenCvView);
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 		mOpenCvCameraView.setCvCameraViewListener(this);
-
-		
 
 	}
 
@@ -243,6 +238,7 @@ public class MainActivity extends ActionBarActivity implements
 		if (first) {
 			Current.copyTo(Prev);
 			first = false;
+			getPerson();
 		}
 		try {
 			Core.absdiff(Current, Prev, Difference);
@@ -293,7 +289,6 @@ public class MainActivity extends ActionBarActivity implements
 				movementFrames = 0;
 			}
 		} else {
-			getPerson();
 			if (Core.countNonZero(Difference) < 35) {
 				if (!timerRunning) {
 					timerRunning = true;
@@ -339,6 +334,11 @@ public class MainActivity extends ActionBarActivity implements
 					timerRunning = false;
 					t.cancel();
 				}
+			}
+			if (needToCatchFrame != 1 ) {
+				needToCatchFrame++;
+			} else {
+				needToCatchFrame =0;
 				if (mAbsoluteFaceSize == 0) {
 					int height = mGray.rows();
 					if (Math.round(height * mRelativeFaceSize) > 0) {
@@ -366,9 +366,9 @@ public class MainActivity extends ActionBarActivity implements
 				}
 
 				Rect[] facesArray = faces.toArray();
-				
+
 				if (facesArray.length == 0) {
-					numberOfFaces =0;
+					numberOfFaces = 0;
 					if (!timerIsRunning) {
 						timerIsRunning = true;
 						t2 = new Timer();
@@ -383,7 +383,7 @@ public class MainActivity extends ActionBarActivity implements
 										timerIsRunning = false;
 										TLs.clear();
 										BRs.clear();
-										
+
 										for (ImageView img : crowns) {
 											img.setVisibility(SurfaceView.GONE);
 										}
@@ -409,12 +409,12 @@ public class MainActivity extends ActionBarActivity implements
 						numberOfFaces = facesArray.length;
 						for (int i = 0; i < facesArray.length; i++) {
 							ArrayList<Point> tempTl = new ArrayList<Point>();
-							for (int j=0;j<3;j++){
+							for (int j = 0; j < 3; j++) {
 								tempTl.add(facesArray[i].tl());
 							}
 							TLs.add(tempTl);
 							ArrayList<Point> tempBr = new ArrayList<Point>();
-							for (int j=0;j<3;j++){
+							for (int j = 0; j < 3; j++) {
 								tempBr.add(facesArray[i].br());
 							}
 							BRs.add(tempBr);
@@ -456,11 +456,13 @@ public class MainActivity extends ActionBarActivity implements
 											.getDrawable(R.drawable.moustache));
 									crown.setImageDrawable(getResources()
 											.getDrawable(R.drawable.sombrero));
-									RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(200, 78);
-									RelativeLayout.LayoutParams lp1 = new RelativeLayout.LayoutParams(550, 280);
+									RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+											200, 78);
+									RelativeLayout.LayoutParams lp1 = new RelativeLayout.LayoutParams(
+											550, 280);
 									moustache.setLayoutParams(lp);
 									crown.setLayoutParams(lp1);
-									
+
 									ll.addView(crown);
 									ll.addView(moustache);
 
@@ -469,7 +471,7 @@ public class MainActivity extends ActionBarActivity implements
 
 						}
 					}
-					
+
 					for (int i = 0; i < facesArray.length; i++) {
 						imgCrown = crowns.get(i);
 						imgMoustache = moustaches.get(i);
@@ -481,7 +483,7 @@ public class MainActivity extends ActionBarActivity implements
 						TLs.get(i).add(facesArray[i].tl());
 						BRs.get(i).remove(0);
 						BRs.get(i).add(facesArray[i].br());
-						
+
 						/*
 						 * for (Point p : Tls) { tl = new
 						 * Point((tl.x+p.x)*0.5,(tl.y+p.y)*0.5); }
@@ -520,7 +522,7 @@ public class MainActivity extends ActionBarActivity implements
 								p1.width = width;
 								p1.height = height;
 								imgCrown.setLayoutParams(p1);
-								
+
 								ViewGroup.LayoutParams p2 = imgMoustache
 										.getLayoutParams();
 								p2.width = (int) (width * 0.25);
@@ -538,37 +540,41 @@ public class MainActivity extends ActionBarActivity implements
 												+ (brFinal.x - tlFinal.x) * 0.5 - width * 0.125));
 								imgCrown.setVisibility(SurfaceView.VISIBLE);
 								imgMoustache.setVisibility(SurfaceView.VISIBLE);
-							
+
 							}
 						});
 
 					}
 				}
-
 			}
+
 		}
 
 		Current.copyTo(Prev);
 		return mRgba;
 	}
+
 	private void getPerson() {
-		 obj = new HandleXML(getString(R.string.ContentURL));
-	      obj.fetchXML();
-	      while(obj.parsingComplete);
-	      persons = obj.getPersons();
-	      runOnUiThread(new Runnable() {
-			
+		obj = new HandleXML(getString(R.string.ContentURL));
+		obj.fetchXML();
+		while (obj.parsingComplete)
+			;
+		persons = obj.getPersons();
+		runOnUiThread(new Runnable() {
+
 			@Override
 			public void run() {
-				 txtWelcome = (TextView) findViewById(R.id.txtWelcome);
-			      if (persons.size()>0)
-			      txtWelcome.setText("Welcome "+persons.get(0).get_naam() + " from " + persons.get(0).get_company()+ "\nat Bazookas Mobile Agency");
-			      else
-			    	  txtWelcome.setText("Welcome at Bazookas Mobile Agency");
-				
+				txtWelcome = (TextView) findViewById(R.id.txtWelcome);
+				if (persons.size() > 0)
+					txtWelcome.setText("Welcome " + persons.get(0).get_naam()
+							+ " from " + persons.get(0).get_company()
+							+ "\nat Bazookas Mobile Agency");
+				else
+					txtWelcome.setText("Welcome at Bazookas Mobile Agency");
+
 			}
 		});
-	    
+
 	}
 
 }
